@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        BUILD_NUMBER = '12.3.5'
+    }
+
     stages {
         // This is a comment
         stage('Build') {
