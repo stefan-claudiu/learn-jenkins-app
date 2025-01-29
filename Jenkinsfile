@@ -3,6 +3,7 @@ agent any
 
 environment {
 BUILD_NUMBER = '12.3.5'
+
 }
 
 stages {
@@ -14,10 +15,13 @@ stages {
                 }
             }
             steps {
-                sh '''
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
                     aws --version
                     aws s3 ls
                 '''
+                }
+                
             }
         }
 
