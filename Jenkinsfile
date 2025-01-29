@@ -7,28 +7,7 @@ BUILD_NUMBER = '12.3.5'
 }
 
 stages {
-        stage('AWS') {
-            agent {
-                docker {
-                    image 'amazon/aws-cli'
-                    args "--entrypoint=''"
-                }
-            }
-            environment {
-                AWS_S3_BUCKET = 'learn-jenkins-20250129'
-            }
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh '''
-                    aws --version
-                    aws s3 ls
-                    echo "Hello S3!" > file.html
-                    aws s3 cp file.html s3://$AWS_S3_BUCKET/file.html
-                '''
-                }
-                
-            }
-        }
+        
 
 
         stage('Docker') {
@@ -55,6 +34,28 @@ stage('Build') {
         '''
     }
 }
+
+stage('AWS') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                    args "--entrypoint=''"
+                }
+            }
+            environment {
+                AWS_S3_BUCKET = 'learn-jenkins-20250129'
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'aws-credentials', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+                    sh '''
+                    aws --version
+                    aws s3 ls
+                    aws s3 sync build s3://$AWS_S3_BUCKET
+                '''
+                }
+                
+            }
+        }
 
 stage('Run Tests') {
     parallel {
