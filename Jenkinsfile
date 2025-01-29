@@ -19,6 +19,8 @@ stages {
                     sh '''
                     aws --version
                     aws s3 ls
+                    echo "Hello S3!" > file.txt
+                    aws s3 cp file.txt s3://learn-jenkins-20250129/file.txt
                 '''
                 }
                 
